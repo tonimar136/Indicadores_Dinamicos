@@ -15,6 +15,18 @@
         }
     }
 
+    if(isset($_POST['editarForm'])){
+        $dados['id']       = $_POST['id'];
+        $dados['nomeForm'] = $_POST['nomeForm'];
+        $dados['descricao'] = $_POST['descricao'];
+        
+        if($dados != null){
+            $form->editaFormulario($dados);
+        }else{
+            echo "erro insert";
+        }
+    }
+
     if(isset($_POST['cadPergunta'])){
         #PERGUNTAS
         $pergunta['formulario'] = $_POST['formulario'];
@@ -22,7 +34,7 @@
         $pergunta['sequencia']  = $_POST['seq'];
         $pergunta['tipo']       = $_POST['tipo'];
 
-        if(($pergunta['tipo'] == '4') || ($pergunta['tipo'] == '5')){
+        if(($pergunta['tipo'] == '3') || ($pergunta['tipo'] == '4') || ($pergunta['tipo'] == '5')){
             #RESPOSTAS
             $respostas = $_POST;
             unset($respostas['formulario']);

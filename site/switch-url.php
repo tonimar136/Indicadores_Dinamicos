@@ -44,6 +44,15 @@
         case 'indicadores':
         include 'parts/indicadores/indicadores.php';
         break;
+        case 'indicadores-ins':
+        include 'parts/indicadores/indicadores.php';
+        break;
+        case 'indicadores-fail':
+        include 'parts/indicadores/indicadores.php';
+        break;
+        case 'meusindicadores':
+        include 'parts/indicadores/meusindicadores.php';
+        break;
         case 'indicadores-form':
         include 'parts/indicadores/indicadores_formulario.php';
         break;

@@ -81,17 +81,23 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div class="modal-body">
-                                ...
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
+                                <form action="controller/form-controller.php" method="POST">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="id" value="<?=$form[0]['id']?>">
+                                        <label for="nomeForm">Nome do Formulário: </label>
+                                        <input type="text" class="form-control" id="nomeForm" name="nomeForm" value="<?=$form[0]['nome']?>" required="">
+
+                                        <label for="descricao">Descrição: </label>
+                                        <input type="text" class="form-control" id="descricao" name="descricao" value="<?=$form[0]['descricao']?>" required="">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="submit" class="btn btn-primary" name="editarForm" value="Salvar">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
-
         	   </div>
 			</div>
 		</div>
@@ -507,7 +513,7 @@ console.log(formData);
         var select = document.getElementById("tipo");
         var textarea = document.getElementById("add");
 
-        if(select.value === "4" || select.value === "5"){
+        if(select.value === "3" || select.value === "4" || select.value === "5"){
         textarea.style.display = "block"; // Exibe o campo textarea
         textarea.disabled = false; // Habilita o campo textarea
         }else{

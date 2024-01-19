@@ -32,6 +32,26 @@
             }
         }
 
+        public function editaFormulario($dados){
+            try{
+                $id   = $dados['id'];
+                $nome = $dados['nomeForm'];
+                $desc = $dados['descricao'];
+
+                $up = $this->conexao->query("UPDATE `tb_formulario` SET `nome` = '".$nome."', `descricao` = '".$desc."' WHERE `id` = '".$id."'");
+                if($up){
+                    $reg = base64_encode($id);
+                    header("Location: ../index.php?url=form-detail-ins&reg=".$reg); exit;
+                }else{
+                    header("Location: ../index.php?url=form-fail"); exit;
+                }
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
+
+
         public function consultaForm(){
             try{
                 $consulta = $this->conexao->query("SELECT id, nome, descricao, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario");

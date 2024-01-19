@@ -67,8 +67,9 @@
 								<p>Formulários</p>
 							</a>
 						</li>
+						
 						<li class="nav-item">
-							<a href="index.php?url=indicadores" class="nav-link">
+							<a href="index.php?url=meusindicadores" class="nav-link">
 								<i class="nav-icon fas fa-file"></i>
 								<p>Meus Formulários</p>
 							</a>
