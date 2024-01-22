@@ -50,13 +50,16 @@
         case 'indicadores-fail':
         include 'parts/indicadores/indicadores.php';
         break;
-        case 'meusindicadores':
-        include 'parts/indicadores/meusindicadores.php';
+        case 'meus-indicadores':
+        include 'parts/indicadores/meus_indicadores.php';
         break;
         case 'indicadores-form':
         include 'parts/indicadores/indicadores_formulario.php';
         break;
-        
+        /****GERAR INDICADORES****/
+        case 'gerar-indicadores':
+        include 'parts/indicadores/gerar_indicadores.php';
+        break;
 
     	/******************************ADMIN***********************************/
         case 'admin':
