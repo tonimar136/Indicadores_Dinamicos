@@ -56,6 +56,16 @@
         case 'indicadores-form':
         include 'parts/indicadores/indicadores_formulario.php';
         break;
+        case 'indicadores-form-edit':
+        include 'parts/indicadores/indicadores_formulario_editar.php';
+        break;
+        case 'indicadores-form-edit-ins':
+        include 'parts/indicadores/indicadores_formulario_editar.php';
+        break;
+        case 'indicadores-form-edit-fail':
+        include 'parts/indicadores/indicadores_formulario_editar.php';
+        break;
+
         /****GERAR INDICADORES****/
         case 'gerar-indicadores':
         include 'parts/indicadores/gerar_indicadores.php';

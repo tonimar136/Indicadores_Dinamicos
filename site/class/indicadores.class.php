@@ -81,6 +81,30 @@
             }
         }
 
+        public function consRespEsp($id, $ctrl){
+            try{
+                $consulta = $this->conexao->query("SELECT * FROM tb_formulario_reposta WHERE controle = '".$ctrl."' and fk_resposta = '".$id."'");
+                $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                #echo '<pre>';
+                #print_r($retorno);
+                return $retorno;
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
+        public function consRespEsp1($id, $ctrl){
+            try{
+                $consulta = $this->conexao->query("SELECT * FROM tb_formulario_reposta WHERE fk_pergunta = '".$id."' and controle = '".$ctrl."'");
+                $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                #echo '<pre>';
+                #print_r($retorno);
+                return $retorno;
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
         public function formRespostas($dados, $pr){
             try{
                 #echo '<pre>'; print_r($pr);; die;
@@ -151,11 +175,89 @@
 
 
 
+        public function updateFormRespostas($dados, $pr){
+            try{
+                $usuario    = $dados['user'];
+                $formulario = $dados['formulario'];
+                $controle   = $dados['controle'];
+
+                $frm = base64_encode($formulario);
+                $crt = base64_encode($controle);
+
+                // Variável para armazenar as partes divididas do array
+                $partesArray = array();
+                $parteAtual = array();
+
+
+                // Iterar sobre o array
+                foreach ($pr as $chave => $valor) {
+                    // Verificar se a chave começa com "id_pergunta"
+                    if (strpos($chave, 'id_pergunta') === 0) {
+                        // Se sim, iniciar uma nova parte do array
+                        if (!empty($parteAtual)) {
+                            $partesArray[] = $parteAtual;
+                        }
+                        $parteAtual = array();
+                    }
+                    // Adicionar a chave e valor à parte atual do array
+                    $parteAtual[$chave] = $valor;
+                }
+
+                // Adicionar a última parte do array
+                if (!empty($parteAtual)) {
+                    $partesArray[] = $parteAtual;
+                }
+
+                #TROCO OS NOMES POR INDICE
+                foreach ($partesArray as $indice => $subArray) {
+                    $partesArray[$indice] = array_values($subArray);
+                }
+
+                #INSERE DADOS
+                $g = 0;
+                $count = count($partesArray);
+                $ins = $this->conexao->query("UPDATE `tb_formulario_reposta` SET `fk_resposta` = null WHERE `controle` = '".$dados['controle']."'");
+
+                while($g < $count){
+                    if($partesArray[$g][1] == 'CHECKBOX *'){
+                        $t = 2;
+                        $cont = count($partesArray[$g]);
+                        $sel  = $this->conexao->query("SELECT data_insert FROM `tb_formulario_reposta` WHERE `controle` = '".$dados['controle']."'");
+                        $dt_ins = $sel->fetch(PDO::FETCH_ASSOC);
+                        $ins  = $this->conexao->query("DELETE FROM `tb_formulario_reposta` WHERE `controle` = '".$dados['controle']."' AND `fk_pergunta` = '".$partesArray[$g][0]."'");
+                        while($t < $cont){
+                            $ins = $this->conexao->query("INSERT INTO `tb_formulario_reposta` (`controle`, `fk_usuario`, `fk_formulario`, `fk_pergunta`, `fk_resposta`, `data_insert`) VALUES ('".$controle."', '".$usuario."', '".$formulario."', '".$partesArray[$g][0]."', '".$partesArray[$g][$t]."', '".$dt_ins['data_insert']."')");
+                            $t++;
+                        }
+                    }else{
+                        if(($partesArray[$g][1] == 'SELECT *') || ($partesArray[$g][1] == 'RADIO *')){
+                            $ins = $this->conexao->query("UPDATE `tb_formulario_reposta` SET `controle` = '".$controle."', `fk_usuario` = '".$usuario."', `fk_formulario` = '".$formulario."', `fk_pergunta` = '".$partesArray[$g][0]."', `fk_resposta` = '".$partesArray[$g][2]."' WHERE `controle` = '".$dados['controle']."' AND `fk_pergunta` = '".$partesArray[$g][0]."'");
+                        }else{
+                            $ins = $this->conexao->query("UPDATE `tb_formulario_reposta` SET `controle` = '".$controle."', `fk_usuario` = '".$usuario."', `fk_formulario` = '".$formulario."', `fk_pergunta` = '".$partesArray[$g][0]."', `resposta` = '".$partesArray[$g][2]."' WHERE `controle` = '".$dados['controle']."' AND `fk_pergunta` = '".$partesArray[$g][0]."'");
+                        }
+                    }
+                    $g++;
+                }
+                if($ins){
+                    header("Location: ../index.php?url=indicadores-form-edit-ins&id=".$frm."&ctrl=".$crt); exit;
+                }else{
+                     header("Location: ../index.php?url=indicadores-form-edit-fail&id=".$frm."&ctrl=".$crt); exit;
+                }
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
+
+
+
+
 
         public function meusIndicadores($id){
             try{
                 $consulta = $this->conexao->query("
-                        SELECT
+                        SELECT DISTINCT
+                            tf.id as id_form,
                             tf.nome as formulario,
                             DATE_FORMAT(tfr.data_insert, '%d/%m/%Y %H:%i') as data,
                             tfr.controle as controle
@@ -163,11 +265,7 @@
                             tb_formulario_reposta tfr
                             INNER JOIN tb_formulario tf ON tf.id = tfr.fk_formulario
                         WHERE
-                            tfr.fk_usuario = '".$id."'
-                        GROUP BY
-                            tf.nome,
-                            DATE_FORMAT(tfr.data_insert, '%d/%m/%Y %H:%i'),
-                            tfr.controle");
+                            tfr.fk_usuario = '".$id."'");
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){
@@ -180,11 +278,13 @@
             try{
                 $consulta = $this->conexao->query("
                     SELECT
+                        f.nome as formulario,
                         tfr.controle,
                         tp.descricao AS pergunta,
                         CASE WHEN tfr.resposta IS NULL THEN tr.descricao ELSE tfr.resposta END AS resposta
                     FROM
                         tb_formulario_reposta tfr
+                        INNER JOIN tb_formulario f ON f.id = tfr.fk_formulario
                         INNER JOIN tb_pergunta tp ON tp.id = tfr.fk_pergunta
                         LEFT JOIN tb_respostas tr ON tr.id = tfr.fk_resposta
                     WHERE
@@ -199,6 +299,66 @@
                 return 'error'.$erro->getMessage();
             }
         }
+
+        public function dadosFormulario($id, $ctrl){
+            
+            try{
+                $consulta = $this->conexao->query("
+                    SELECT
+                        f.id as id,
+                        f.nome as nome,
+                        f.descricao as formulario,
+                        u.nome as criador,
+                        p.id as id_pergunta,
+                        p.descricao as pergunta,
+                        tr.descricao as tipo_resposta,
+                        r.id,
+                        r.descricao,
+                        CASE WHEN p.fk_tipo_resposta = '3' AND tfr.fk_resposta IS NOT NULL THEN 'checked'
+                             WHEN p.fk_tipo_resposta = '4' AND tfr.fk_resposta IS NOT NULL THEN 'selected'
+                             WHEN p.fk_tipo_resposta = '5' AND tfr.fk_resposta IS NOT NULL THEN 'checked'
+                             ELSE tfr.resposta END AS resposta
+                    FROM
+                        tb_pergunta p
+                        INNER JOIN tb_tipo_resposta tr ON tr.id = p.fk_tipo_resposta
+                        INNER JOIN tb_formulario f ON f.id = p.fk_formulario
+                        INNER JOIN tb_usuario u ON u.id = f.fk_user_criador
+                        LEFT JOIN tb_respostas r ON r.fk_pergunta = p.id
+                        LEFT JOIN tb_formulario_reposta tfr on tfr.fk_pergunta = p.id
+                    WHERE
+                        f.id = '".$id."'
+                        AND controle = '".$ctrl."'
+                    GROUP BY
+                        f.id,
+                        f.nome,
+                        f.descricao,
+                        u.nome,
+                        p.id,
+                        p.descricao,
+                        tr.descricao,
+                        r.id,
+                        r.descricao,
+                        CASE WHEN p.fk_tipo_resposta = '3' AND tfr.fk_resposta IS NOT NULL THEN 'checked'
+                             WHEN p.fk_tipo_resposta = '4' AND tfr.fk_resposta IS NOT NULL THEN 'selected'
+                             WHEN p.fk_tipo_resposta = '5' AND tfr.fk_resposta IS NOT NULL THEN 'checked'
+                             ELSE tfr.resposta END
+                    ORDER BY
+                        p.sequencia,
+                        r.sequencia");
+                $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                #echo '<pre>';
+                #print_r($retorno);
+                return $retorno;
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
+
+
+
+
+
     }
 
 

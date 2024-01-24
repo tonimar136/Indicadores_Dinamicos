@@ -22,4 +22,24 @@
         }
     }
 
+    if(isset($_POST['atualizarIndicadores'])){
+        $pr = $_POST;
+        unset($pr['formulario']);
+        unset($pr['id_user']);
+        unset($pr['atualizarIndicadores']);
+        unset($pr['controle']);
+
+        $dados['formulario'] = $_POST['formulario'];
+        $dados['user']       = $_POST['id_user'];
+        $dados['controle']   = $_POST['controle'];
+
+        if($dados != null){
+            $indicadores->updateFormRespostas($dados, $pr);        
+        }else{
+            echo "erro insert";
+        }
+    }
+
+    
+
 ?>

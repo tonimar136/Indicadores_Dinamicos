@@ -1,4 +1,7 @@
 <?php
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+
 	require_once 'class/indicadores.class.php';
 	$ind	= new Indicadores();
 	$meus	= $ind->meusIndicadores($_SESSION['UserID']);
@@ -47,7 +50,7 @@
             	</div>
 
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table id="meusFormularios" class="table table-bordered">
                         <thead>
                             <tr>
                                 <th>Formulário</th>
@@ -59,15 +62,27 @@
                             <?php
                                 $g = 0;
                                 $count = count($meus);
+                                $dataAtual = new DateTime();
+                                #echo '<pre>'; print_r($meus);
                                 while($g < $count){
+                                    $dataArmazenada = DateTime::createFromFormat('d/m/Y H:i', $meus[$g]['data']);
+                                    $dif = $dataAtual->diff($dataArmazenada)->days;
+                                    $id_ind = base64_encode($meus[$g]['id_form']);
+                                    $ctrl = base64_encode($meus[$g]['controle']);
+                                    if($dif > 15){
+                                        $disable = 'disabled';
+                                    }else{
+                                        $disable = '';
+                                    }
+
                                     ?>
                                         <tr>
                                             <td style="width: 50%"><?=$meus[$g]['formulario']?></td>
                                             <td style="width: 20%"><?=$meus[$g]['data']?></td>
                                             <td style="width: 30%">
                                                 <button type="button" class="btn btn-info btn-sm" onclick="carregarConteudo(<?=$meus[$g]['controle']?>)">Visualizar</button>
-                                                <button type="button" class="btn btn-info btn-sm">Editar</button>
-                                                <button type="button" class="btn btn-info btn-sm">Excluir</button>
+                                                <a href="index.php?url=indicadores-form-edit&id=<?=$id_ind?>&ctrl=<?=$ctrl?>" <?=$disable?> class="btn btn-info btn-sm" >Editar</a>
+                                                <button type="button" <?=$disable?> class="btn btn-info btn-sm">Excluir</button>
                                             </td>
                                         </tr>
                                     <?php
@@ -89,7 +104,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="modalLabel"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -97,8 +112,7 @@
             <div class="modal-body">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>
@@ -112,6 +126,12 @@
         $('#meuModal').on('hidden.bs.modal', function () {
             // "Zera" a variável dados
             dadosArray = null;
+        });
+
+        $('#meusFormularios').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json',
+            },
         });
     });
         
@@ -133,11 +153,11 @@
                         "<label>" + cont++ + " - " + dados.pergunta + "</label><br>" +
                         "<span>" + dados.resposta + "</span><br><br>"
                         "</div>";
-
                     // Adiciona a linha HTML ao modal
                     $('#meuModal .modal-body').append(linhaHTML);
                 });
-
+                var titulo = dadosArray[0].formulario;
+                $('#meuModal #modalLabel').append(titulo);
                 $('#meuModal').modal('show');
             },
             error: function() {
