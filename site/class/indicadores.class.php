@@ -10,6 +10,11 @@
             $resultado = $indicadores->dadosForm($controle);
             echo json_encode($resultado); // Envia a resposta como JSON, ajuste conforme necessário
         }
+
+        if($_POST['action'] == 'excluirForm') {
+            $resultado = $indicadores->deleteForm($controle);
+            echo json_encode('OK'); // Envia a resposta como JSON, ajuste conforme necessário
+        }
     }
 
 
@@ -355,7 +360,14 @@
         }
 
 
-
+        public function deleteForm($ctrl){
+            
+            try{
+                $consulta = $this->conexao->query("DELETE FROM `tb_formulario_reposta` WHERE controle = '".$ctrl."'");
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
 
 
 

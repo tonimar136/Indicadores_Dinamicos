@@ -82,7 +82,7 @@
                                             <td style="width: 30%">
                                                 <button type="button" class="btn btn-info btn-sm" onclick="carregarConteudo(<?=$meus[$g]['controle']?>)">Visualizar</button>
                                                 <a href="index.php?url=indicadores-form-edit&id=<?=$id_ind?>&ctrl=<?=$ctrl?>" <?=$disable?> class="btn btn-info btn-sm" >Editar</a>
-                                                <button type="button" <?=$disable?> class="btn btn-info btn-sm">Excluir</button>
+                                                <button type="button" id="btnExcluir" class="btn btn-info btn-sm" <?=$disable?> onclick="excluirForm(<?=$meus[$g]['controle']?>)">Excluir</button>
                                             </td>
                                         </tr>
                                     <?php
@@ -118,6 +118,27 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modalExcluir" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="confExcluir" class="btn btn-warning">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     var dadosArray = null;
 
@@ -136,7 +157,7 @@
     });
         
     // Função para carregar conteúdo usando AJAX e chamar uma função específica com os dados
-    function carregarConteudo(numeroControle) {
+    function carregarConteudo(numeroControle){
         $.ajax({
             url: 'class/indicadores.class.php',
             type: 'POST',
@@ -147,7 +168,7 @@
                 var dadosArray = JSON.parse(response);
                 var cont = 1;
 
-                $.each(dadosArray, function(index, dados) {
+                $.each(dadosArray, function(index, dados){
                     // Cria novos elementos no modal para cada linha de retorno
                     var linhaHTML = "<div class='dados-form'>" +
                         "<label>" + cont++ + " - " + dados.pergunta + "</label><br>" +
@@ -165,7 +186,54 @@
             }
         });
     }
+
+
+    function excluirForm(numeroControle) {
+        // Configuração do modal
+        var modal = $('#modalExcluir');
+        modal.find('.modal-title').text('Excluir Registro');
+        modal.find('.modal-body').html('Deseja realmente excluir o registro?');
+
+        // Configuração dos botões do modal
+        var btnSaveChanges = modal.find('#confExcluir');
+        btnSaveChanges.off('click'); // Remove qualquer handler de clique anterior
+        btnSaveChanges.on('click', function () {
+            // Aqui você pode adicionar a lógica Ajax para excluir o registro
+            // Certifique-se de ajustar a URL e outros parâmetros conforme necessário
+            $.ajax({
+                type: 'POST',
+                url: 'class/indicadores.class.php',
+                data: { controle: numeroControle, action: 'excluirForm'},
+                dataType: 'json', // Indica que você espera uma resposta em JSON
+                success: function(response) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Formulário Excluído!',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+
+                    setTimeout(function() {
+                        location.reload();
+                    }, 3000);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro ao enviar dados:', error);
+                }
+            });
+
+            // Fechar o modal após o processamento Ajax
+            modal.modal('hide');
+        });
+
+        // Exibe o modal
+        modal.modal('show');
+    }
+
 </script>
+
+
 
 
 

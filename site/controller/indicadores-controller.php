@@ -40,6 +40,21 @@
         }
     }
 
+    if(isset($_POST['excluirIndicadores'])){
+        echo '<pre>';
+        print_r($_POST);
+        die;
+        $dados['formulario'] = $_POST['formulario'];
+        $dados['user']       = $_POST['id_user'];
+        $dados['controle']   = $_POST['controle'];
+
+        if($dados != null){
+            $indicadores->updateFormRespostas($dados);        
+        }else{
+            echo "erro insert";
+        }
+    }
+
     
 
 ?>
