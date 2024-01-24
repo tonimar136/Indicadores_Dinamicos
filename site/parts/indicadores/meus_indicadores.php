@@ -237,8 +237,8 @@
 
 
 
-<?php /*
-	if($_GET['url'] == 'form-ins'){
+<?php
+	if($_GET['url'] == 'meus-indicadores-ins'){
         echo '
             <script>
                 Swal.fire({
@@ -252,7 +252,7 @@
         ';
     }
 
-    if($_GET['url'] == 'form-fail'){
+    if($_GET['url'] == 'meus-indicadores-fail'){
         echo '
             <script>
                 Swal.fire({
@@ -265,7 +265,7 @@
             </script>
         ';
     }
-
+/*
     if($_GET['url'] == 'form-success'){
         echo '
             <script>

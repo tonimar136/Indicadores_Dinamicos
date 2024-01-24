@@ -53,6 +53,12 @@
         case 'meus-indicadores':
         include 'parts/indicadores/meus_indicadores.php';
         break;
+        case 'meus-indicadores-ins':
+        include 'parts/indicadores/meus_indicadores.php';
+        break;
+        case 'meus-indicadores-fail':
+        include 'parts/indicadores/meus_indicadores.php';
+        break;
         case 'indicadores-form':
         include 'parts/indicadores/indicadores_formulario.php';
         break;

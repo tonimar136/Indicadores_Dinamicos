@@ -169,9 +169,9 @@
                 }
 
                 if($ins){
-                    header("Location: ../index.php?url=indicadores-ins"); exit;
+                    header("Location: ../index.php?url=meus-indicadores-ins"); exit;
                 }else{
-                     header("Location: ../index.php?url=indicadores-fail"); exit;
+                     header("Location: ../index.php?url=meus-indicadores-fail"); exit;
                 }
             }catch(PDOException $erro){
                 return 'error'.$erro->getMessage();
