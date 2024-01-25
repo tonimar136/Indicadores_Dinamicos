@@ -7,6 +7,7 @@
     if(isset($_POST['insertForm'])){
         $dados['nome']     = $_POST['nome'];
         $dados['desricao'] = $_POST['descricao'];
+        $dados['grupos']   = $_POST['grupo'];
         
         if($dados != null){
             $form->insertFormulario($dados);
@@ -16,10 +17,10 @@
     }
 
     if(isset($_POST['editarForm'])){
-        $dados['id']       = $_POST['id'];
-        $dados['nomeForm'] = $_POST['nomeForm'];
+        $dados['id']        = $_POST['id'];
+        $dados['nomeForm']  = $_POST['nomeForm'];
         $dados['descricao'] = $_POST['descricao'];
-        
+        $dados['grupos']    = $_POST['grupo'];
         if($dados != null){
             $form->editaFormulario($dados);
         }else{

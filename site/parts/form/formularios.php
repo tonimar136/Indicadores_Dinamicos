@@ -2,6 +2,7 @@
 	require_once 'class/form.class.php';
 	$formulario	= new Formulario();
 	$form 		= $formulario->consultaForm();
+    $grup       = $formulario->consultaGrupos();
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
@@ -54,6 +55,17 @@
 							<input type="text" class="form-control" id="descricao" name="descricao" aria-describedby="descHelp" placeholder="Descrição...">
 							<small id="descHelp" class="form-text text-muted">Digite uma breve descrição para seu formulário.</small>
 						</div>
+                        <div class="form-group">
+                            <label for="nomeForm">Selecione os grupos que terão acesso a este formulário: </label><br>
+                            <?php
+                                $i = 0;
+                                $ct = count($grup);
+                                while($i < $ct){
+                                        echo '<input type="checkbox" value="'.$grup[$i]['id'].'" name="grupo[]"/> '.$grup[$i]['descricao'].' <br>';
+                                    $i++;
+                                }
+                            ?>
+                        </div>
 						
 						<button type="submit" name="insertForm" class="btn btn-info" style="float: right;" title="Salvar formulário">SALVAR</button>
 					</form>
@@ -97,7 +109,7 @@
 			    					    	<td>'.$form[$j]['status'].'</td>
 			    					    	<td>
                                                 <button type="button" class="btn btn-info btn-sm" onclick="window.location.href = \'index.php?url=form-detail&reg='.$id_form.'\';">Editar</button>
-                                                <button type="button" class="btn btn-warning btn-sm btnExcluir" data-toggle="modal" data-target="#excluir" data-id="'.$form[$j]['id'].'">Excluir</button>
+                                                <!--<button type="button" class="btn btn-warning btn-sm btnExcluir" data-toggle="modal" data-target="#excluir" data-id="'.$form[$j]['id'].'">Excluir</button>-->
                                             </td>
 			    					    </tr>
     								';

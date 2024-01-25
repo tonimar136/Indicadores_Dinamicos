@@ -47,80 +47,88 @@
             	</div>
 
                 <div class="card-body">
-                    <center>
-                        <h3><?php echo $formulario[0]['id'] . ' - ' . $formulario[0]['formulario'] ?></h3>
-                        <span>Criado por <?=$formulario[0]['criador']?>
-                    </center>
+                    
+                    <?php
+                        if(empty($formulario)){
+                            echo '<center><h5>Não foram cadastrado perguntas neste formulário, informe ao responsável.</h5></center>';
+                        }else{
+                    ?>
+                        <center>
+                            <h3><?php echo $formulario[0]['id'] . ' - ' . $formulario[0]['formulario'] ?></h3>
+                            <span>Criado por <?=$formulario[0]['criador']?>
+                        </center>
 
-                    <hr>
-                    <form action="controller/indicadores-controller.php" method="POST">
-                        <div class="form-group">
-                            <?php $agora = date('YmdHis');?>
-                            <input type="hidden" name="formulario" value="<?=$formulario[0]['id']?>">
-                            <input type="hidden" name="id_user" value="<?=$_SESSION['UserID']?>">
-                            <input type="hidden" name="controle" value="<?=$agora?>">
-                            <?php
-                                $j = 0;
-                                $t = 1;
-                                $cont = count($formulario);
-                                while ($j < $cont) {
-                                    ?>
-                                        <div class="form-group">
-                                            <b><?=$t?> - </b><label for="descricao"><?=$formulario[$j]['pergunta']?></label>
-                                            <input type="hidden" name="id_pergunta<?=$t?>" value="<?=$formulario[$j]['id_pergunta']?>">
-                                            <input type="hidden" name="tiporesposta<?=$t?>" value="<?=$formulario[$j]['tipo_resposta']?>">
-                                            <?php
-                                                $select = $ind->consultaRespostas($formulario[$j]['id_pergunta']);
+                        <hr>
 
-                                                if($formulario[$j]['tipo_resposta'] == 'SELECT *'){
-                                                    echo '<select class="form-control" name="resposta'.$t.'">';
-                                                        echo '<option>--SELECIONE--</option>';
+                        <form action="controller/indicadores-controller.php" method="POST">
+                            <div class="form-group">
+                                <?php $agora = date('YmdHis');?>
+                                <input type="hidden" name="formulario" value="<?=$formulario[0]['id']?>">
+                                <input type="hidden" name="id_user" value="<?=$_SESSION['UserID']?>">
+                                <input type="hidden" name="controle" value="<?=$agora?>">
+                                <?php
+                                    $j = 0;
+                                    $t = 1;
+                                    $cont = count($formulario);
+                                    while ($j < $cont) {
+                                        ?>
+                                            <div class="form-group">
+                                                <b><?=$t?> - </b><label for="descricao"><?=$formulario[$j]['pergunta']?></label>
+                                                <input type="hidden" name="id_pergunta<?=$t?>" value="<?=$formulario[$j]['id_pergunta']?>">
+                                                <input type="hidden" name="tiporesposta<?=$t?>" value="<?=$formulario[$j]['tipo_resposta']?>">
+                                                <?php
+                                                    $select = $ind->consultaRespostas($formulario[$j]['id_pergunta']);
+
+                                                    if($formulario[$j]['tipo_resposta'] == 'SELECT *'){
+                                                        echo '<select class="form-control" name="resposta'.$t.'">';
+                                                            echo '<option>--SELECIONE--</option>';
+                                                            $g = 0;
+                                                            $conta = count($select);
+                                                            while($g < $conta){
+                                                                echo '<option value="'.$select[$g]['id'].'">'.$select[$g]['descricao'].'</option>';
+                                                                $g++;
+                                                            }
+                                                        echo '</select>';
+                                                    }elseif($formulario[$j]['tipo_resposta'] == 'RADIO *'){
                                                         $g = 0;
                                                         $conta = count($select);
                                                         while($g < $conta){
-                                                            echo '<option value="'.$select[$g]['id'].'">'.$select[$g]['descricao'].'</option>';
+                                                            echo '<br><input type="radio" name="resposta'.$t.'" value="'.$select[$g]['id'].'">'.$select[$g]['descricao'];
                                                             $g++;
                                                         }
-                                                    echo '</select>';
-                                                }elseif($formulario[$j]['tipo_resposta'] == 'RADIO *'){
-                                                    $g = 0;
-                                                    $conta = count($select);
-                                                    while($g < $conta){
-                                                        echo '<br><input type="radio" name="resposta'.$t.'" value="'.$select[$g]['id'].'">'.$select[$g]['descricao'];
-                                                        $g++;
-                                                    }
-                                                }elseif($formulario[$j]['tipo_resposta'] == 'CHECKBOX *'){
-                                                    $g = 0;
-                                                    $conta = count($select);
-                                                    while($g < $conta){
-                                                        echo '<br><input type="checkbox" name="resposta-ck'.$t.'-'.$g.'" value="'.$select[$g]['id'].'">'.$select[$g]['descricao'];
-                                                        $g++;
-                                                    }
-                                                }else{
-                                                    if($formulario[$j]['tipo_resposta'] == 'DATA'){
-                                                        echo '<input type="date" class="form-control" name="resposta'.$t.'"';
-                                                    }elseif($formulario[$j]['tipo_resposta'] == 'APENAS NÚMEROS'){
-                                                        echo '<input type="text" class="form-control apenas-numeros" name="resposta'.$t.'">';
-                                                    }elseif($formulario[$j]['tipo_resposta'] == 'CEP'){
-                                                        echo '<input type="text" class="form-control cep-input" name="resposta'.$t.'" maxlength="9" placeholder="Digite o CEP">';
-                                                    }elseif($formulario[$j]['tipo_resposta'] == 'CPF/CNPJ'){
-                                                        echo '<input type="text" class="form-control cpf-cnpj" name="resposta'.$t.'" placeholder="Digite sua resposta...">';
-                                                    }elseif($formulario[$j]['tipo_resposta'] == 'TEXTO ÁREA'){
-                                                        echo '<textarea class="form-control" name="resposta'.$t.'" rows="3"></textarea>';
+                                                    }elseif($formulario[$j]['tipo_resposta'] == 'CHECKBOX *'){
+                                                        $g = 0;
+                                                        $conta = count($select);
+                                                        while($g < $conta){
+                                                            echo '<br><input type="checkbox" name="resposta-ck'.$t.'-'.$g.'" value="'.$select[$g]['id'].'">'.$select[$g]['descricao'];
+                                                            $g++;
+                                                        }
                                                     }else{
-                                                        echo '<input type="text" class="form-control" name="resposta'.$t.'" placeholder="Digite sua resposta...">';
+                                                        if($formulario[$j]['tipo_resposta'] == 'DATA'){
+                                                            echo '<input type="date" class="form-control" name="resposta'.$t.'"';
+                                                        }elseif($formulario[$j]['tipo_resposta'] == 'APENAS NÚMEROS'){
+                                                            echo '<input type="text" class="form-control apenas-numeros" name="resposta'.$t.'">';
+                                                        }elseif($formulario[$j]['tipo_resposta'] == 'CEP'){
+                                                            echo '<input type="text" class="form-control cep-input" name="resposta'.$t.'" maxlength="9" placeholder="Digite o CEP">';
+                                                        }elseif($formulario[$j]['tipo_resposta'] == 'CPF/CNPJ'){
+                                                            echo '<input type="text" class="form-control cpf-cnpj" name="resposta'.$t.'" placeholder="Digite sua resposta...">';
+                                                        }elseif($formulario[$j]['tipo_resposta'] == 'TEXTO ÁREA'){
+                                                            echo '<textarea class="form-control" name="resposta'.$t.'" rows="3"></textarea>';
+                                                        }else{
+                                                            echo '<input type="text" class="form-control" name="resposta'.$t.'" placeholder="Digite sua resposta...">';
+                                                        }
                                                     }
-                                                }
-                                            ?>
-                                        </div>
-                                    <?php
-                                    $j++;
-                                    $t++;
-                                }
-                            ?>
-                        </div>
-                        <input style="float: right;" type="submit" class="btn btn-primary" name="salvarIndicadores" value="Salvar">
-                    </form>
+                                                ?>
+                                            </div>
+                                        <?php
+                                        $j++;
+                                        $t++;
+                                    }
+                                ?>
+                            </div>
+                            <input style="float: right;" type="submit" class="btn btn-primary" name="salvarIndicadores" value="Salvar">
+                        </form>
+                    <?php } ?>
                 </div>		    
 			</div>
 		</div>

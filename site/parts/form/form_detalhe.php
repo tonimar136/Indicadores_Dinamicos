@@ -5,6 +5,7 @@
 	$form = $formulario->formDetalhe($id);
     $resp = $formulario->consultaTipoResposta();
     $perg = $formulario->listaPergunta($id);
+    $grup = $formulario->consultaGrupos();
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
@@ -66,12 +67,27 @@
 						<label for="descricao">Descrição: </label> <span><?=$form[0]['descricao']?></span>
 					</div>
 
+                    <div class="form-group">
+                        <label for="nomeForm">Grupos: </label><br>
+                        <?php
+                            $g = $form[0]['grupos'];
+                            $i = 0;
+                            $ct = count($grup);
+                            while($i < $ct){
+                                    $idGrupo = $grup[$i]['id'];
+                                    $meusGrupos = (in_array($idGrupo, explode(',', $g))) ? '- ' . $grup[$i]['descricao'] . '<br>' : '';
+                                    echo $meusGrupos;
+                                $i++;
+                            }
+                        ?>
+                    </div>                    
+
                     <button type="button" class="btn" data-toggle="modal" data-target="#editDados" title="Editar" style="float: right; box-shadow: 0 14px 28px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.22) !important">
                         <img src="images/edit.png" width="25px"><br>
                         <span style="font-size: 10px"><b>EDITAR</b></span>
                     </button>
 
-                    <!-- Modal -->
+                    <!-- Modal Editar -->
                     <div class="modal fade" id="editDados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -87,8 +103,23 @@
                                         <label for="nomeForm">Nome do Formulário: </label>
                                         <input type="text" class="form-control" id="nomeForm" name="nomeForm" value="<?=$form[0]['nome']?>" required="">
 
+                                        <br>
                                         <label for="descricao">Descrição: </label>
                                         <input type="text" class="form-control" id="descricao" name="descricao" value="<?=$form[0]['descricao']?>" required="">
+
+                                        <br>
+                                        <label for="nomeForm">Grupos: </label><br>
+                                        <?php
+                                            $g = $form[0]['grupos'];
+                                            $i = 0;
+                                            $ct = count($grup);
+                                            while($i < $ct){
+                                                    $idGrupo = $grup[$i]['id'];
+                                                    $checked = (in_array($idGrupo, explode(',', $g))) ? 'checked' : '';
+                                                    echo '<input type="checkbox" value="'.$grup[$i]['id'].'" name="grupo[]" '.$checked.'/> '.$grup[$i]['descricao'].' <br>';
+                                                $i++;
+                                            }
+                                        ?>
                                     </div>
                                     <div class="modal-footer">
                                         <input type="submit" class="btn btn-primary" name="editarForm" value="Salvar">

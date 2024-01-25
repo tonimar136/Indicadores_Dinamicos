@@ -13,12 +13,12 @@
                 if(!isset($_SESSION['UserID'])){
                     session_start();
                 }
-                
                 $nome = $dados['nome'];
                 $desc = $dados['desricao'];
                 $user = $_SESSION['UserID'];
+                $grupo = implode(',', $dados['grupos']);
 
-                $ins = $this->conexao->query("INSERT INTO `tb_formulario` (`nome`, `descricao`, `data_criacao`, `fk_user_criador`, `status`) VALUES ('".$nome."', '".$desc."', now(), '".$user."', 'A')");
+                $ins = $this->conexao->query("INSERT INTO `tb_formulario` (`nome`, `descricao`, `data_criacao`, `fk_user_criador`, `grupos`, `status`) VALUES ('".$nome."', '".$desc."', now(), '".$user."', '".$grupo."', 'A')");
                 if($ins){
                     $consulta = $this->conexao->query("SELECT * FROM tb_formulario ORDER BY id DESC LIMIT 1");
                     $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -37,8 +37,9 @@
                 $id   = $dados['id'];
                 $nome = $dados['nomeForm'];
                 $desc = $dados['descricao'];
+                $grupo = implode(',', $dados['grupos']);
 
-                $up = $this->conexao->query("UPDATE `tb_formulario` SET `nome` = '".$nome."', `descricao` = '".$desc."' WHERE `id` = '".$id."'");
+                $up = $this->conexao->query("UPDATE `tb_formulario` SET `nome` = '".$nome."', `descricao` = '".$desc."', `grupos` = '".$grupo."' WHERE `id` = '".$id."'");
                 if($up){
                     $reg = base64_encode($id);
                     header("Location: ../index.php?url=form-detail-ins&reg=".$reg); exit;
@@ -62,6 +63,16 @@
             }
         }
 
+        public function consultaGrupos(){
+            try{
+                $consulta = $this->conexao->query("SELECT * FROM tb_group");
+                $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                return $retorno;
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
         public function consultaTipoResposta(){
             try{
                 $consulta = $this->conexao->query("SELECT id, descricao FROM tb_tipo_resposta WHERE status = 'A' ORDER BY descricao");
@@ -74,7 +85,7 @@
 
         public function formDetalhe($id){
             try{
-                $consulta = $this->conexao->query("SELECT id, nome, descricao, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario WHERE id = " . $id);
+                $consulta = $this->conexao->query("SELECT id, nome, descricao, grupos, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario WHERE id = " . $id);
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){
