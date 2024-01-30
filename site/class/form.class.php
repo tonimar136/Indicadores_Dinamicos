@@ -276,23 +276,24 @@
 
 
 
-        public function delForm($dados){
+        public function delForm($dados) {
             $id = $dados['id'];
-            
+            try {
+                # DELETA RESPOSTAS
+                $query = $this->conexao->query("SELECT * FROM tb_formulario_reposta WHERE `fk_formulario` = '".$id."'");
+                $retorno = $query->fetchAll(PDO::FETCH_ASSOC);
+                $cont = count($retorno);
 
-
-
-
-            /*
-            try{
-                #DELETA RESPOSTAS
-                $query_r = $this->conexao->query("DELETE FROM `tb_respostas` WHERE `fk_pergunta` = '".$id."'");
-                
-                #DELETA PERGUNTA
-                $query_p = $this->conexao->query("DELETE FROM `tb_pergunta` WHERE `id` = '".$id."'");
-            }catch(PDOException $erro){
-                return 'error'.$erro->getMessage();
-            }*/
+                if ($cont < 1) {
+                    # DELETA FORM
+                    $query_f = $this->conexao->query("DELETE FROM `tb_formulario` WHERE `id` = '".$id."'");
+                    return ['status' => 'success'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Existem respostas associadas a este formulário.'];
+                }
+            } catch (PDOException $erro) {
+                return ['status' => 'error', 'message' => $erro->getMessage()];
+            }
         }
 
 

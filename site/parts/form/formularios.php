@@ -120,7 +120,7 @@
 			    					    	<td>'.$form[$j]['status'].'</td>
 			    					    	<td>
                                                 <button type="button" class="btn btn-info btn-sm" onclick="window.location.href = \'index.php?url=form-detail&reg='.$id_form.'\';">Editar</button>
-                                                <!--<button type="button" class="btn btn-warning btn-sm btnExcluir" data-toggle="modal" data-target="#excluir" data-id="'.$form[$j]['id'].'">Excluir</button>-->
+                                                <button type="button" class="btn btn-warning btn-sm btnExcluir" data-toggle="modal" data-target="#excluir" data-id="'.$form[$j]['id'].'">Excluir</button>
                                             </td>
 			    					    </tr>
     								';
@@ -171,29 +171,49 @@
 
     $(document).ready(function() {
         $('#tableForm').on('click', '.btnExcluir', function() {
-            var idParaExcluir = $(this).data('id');
-            $('#excluir').find('.delete-form').data('id', idParaExcluir);
-            $('#excluir').find('#conteudoModal').text('Deseja realmente excluir o Formulário ID Nº: ' + idParaExcluir + ' ?');
+            var idForm = $(this).data('id');
+            $('#excluir').find('.delete-form').data('id', idForm);
+            $('#excluir').find('#conteudoModal').text('Deseja realmente excluir o Formulário ID Nº: ' + idForm + ' ?');
         });
 
         // Submissão dos dados via AJAX quando o botão "Confirmar" no modal for clicado
         $('#excluir').on('click', '.delete-form', function() {
-            var idParaExcluir = $(this).data('id');
+            var idForm = $(this).data('id');
             $.ajax({
                 url: 'controller/form-controller.php',
                 method: 'POST',
-                data: { 'delete-formulario': '', 'id': idParaExcluir },
+                data: { 'delete-formulario': '', 'id': idForm },
 
-                success: function(data) {
-                    Swal.fire({
-                        position: "top-end",
-                        icon: "success",
-                        title: "Dados excluídos sucesso!",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    // Fechar o modal após a exclusão
-                    $('#excluir').modal('hide');
+                success: function(response) {
+                    console.log(response.status);
+                    var result = JSON.parse(response);
+                    console.log(result.status);
+                    if(result.status === 'success'){
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Dados excluídos com sucesso!",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        $('#excluir').modal('hide');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    }else{
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "error",
+                            title: "Erro",
+                            title: "Formulário possui correlacionamento!",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        $('#excluir').modal('hide');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    }
                 },
                 error: function(err) {
                     // Em caso de erro na requisição, você pode lidar com isso aqui
@@ -246,7 +266,4 @@
             </script>
         ';
     }
-
-
-
 ?>

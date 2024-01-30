@@ -99,12 +99,13 @@
         }
     }
 
-    if(isset($_POST['delete-formulario'])){
+    if (isset($_POST['delete-formulario'])) {
         $dados['id'] = $_POST['id'];
-        if($dados != null){
-            $form->delForm($dados);
-        }else{
-            echo "erro insert";
+        if ($dados != null) {
+            $result = $form->delForm($dados);
+            echo json_encode($result);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Erro nos dados recebidos']);
         }
     }
 ?>
