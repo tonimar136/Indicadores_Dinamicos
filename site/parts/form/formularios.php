@@ -3,6 +3,7 @@
 	$formulario	= new Formulario();
 	$form 		= $formulario->consultaForm();
     $grup       = $formulario->consultaGrupos();
+    $fil        = $formulario->consultarFiliais();
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
@@ -55,6 +56,17 @@
 							<input type="text" class="form-control" id="descricao" name="descricao" aria-describedby="descHelp" placeholder="Descrição...">
 							<small id="descHelp" class="form-text text-muted">Digite uma breve descrição para seu formulário.</small>
 						</div>
+                        <div class="form-group">
+                            <label for="filial">Selecione qual filial terá acesso a este formulário: </label><br>
+                            <?php
+                                $i = 0;
+                                $ct = count($fil);
+                                while($i < $ct){
+                                        echo '<input type="checkbox" value="'.$fil[$i]['id'].'" name="filial[]"/> '.$fil[$i]['descricao'].' <br>';
+                                    $i++;
+                                }
+                            ?>
+                        </div>
                         <div class="form-group">
                             <label for="nomeForm">Selecione os grupos que terão acesso a este formulário: </label><br>
                             <?php

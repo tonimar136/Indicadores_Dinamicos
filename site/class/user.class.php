@@ -15,7 +15,7 @@
                 $usuario = $dados['user'];
                 $senha = md5($dados['password']);
                
-                $consulta = $this->conexao->query("SELECT `id`,`nome`, `email`, `senha`, `fk_group`, `status` FROM `tb_usuario` WHERE (`email` = '".$usuario."') AND (`senha` = '".$senha."') AND (`status` = 'A') LIMIT 1");
+                $consulta = $this->conexao->query("SELECT `id`,`nome`, `email`, `senha`, `filiais`, `fk_group`, `status` FROM `tb_usuario` WHERE (`email` = '".$usuario."') AND (`senha` = '".$senha."') AND (`status` = 'A') LIMIT 1");
                 $return = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
                 $cont = count($return);
@@ -28,6 +28,7 @@
                     $_SESSION['UserNome']       = $return[0]['nome'];
                     $_SESSION['UsuarioEmail']   = $return[0]['email'];
                     $_SESSION['UserSenha']      = $return[0]['senha'];
+                    $_SESSION['UserFilial']     = $return[0]['filiais'];
                     $_SESSION['UserGroup']      = $return[0]['fk_group'];
                     $_SESSION['UserStatus']     = $return[0]['status'];
                     #print_r($_SESSION); die;
@@ -67,9 +68,10 @@
                 $nome  = $dados['nome'];
                 $email = $dados['email'];
                 $senha = md5($dados['senha']);
+                $filial = $dados['filial'];
                 $grupo = $dados['grupo'];
 
-                $ins = $this->conexao->query("INSERT INTO `tb_usuario` (`nome`, `email`, `senha`, `fk_group`, `status`) VALUES ('".$nome."', '".$email."', '".$senha."', '".$grupo."', 'A')");
+                $ins = $this->conexao->query("INSERT INTO `tb_usuario` (`nome`, `email`, `senha`, `filiais`, `fk_group`, `status`) VALUES ('".$nome."', '".$email."', '".$senha."', '".$filial."', '".$grupo."', 'A')");
 
                 if($ins){
                     header("Location: ../index.php?url=admin-success"); exit;
@@ -87,9 +89,10 @@
                 $nome   = $dados['nome'];
                 $email  = $dados['email'];
                 $grupo  = $dados['grupo'];
+                $filial = $dados['filial'];
                 $status = $dados['status'];
 
-                $ins = $this->conexao->query("UPDATE `tb_usuario` SET `nome` = '".$nome."', `email` = '".$email."', `fk_group` = '".$grupo."', `status` = '".$status."' WHERE `id` = '".$id."'");
+                $ins = $this->conexao->query("UPDATE `tb_usuario` SET `nome` = '".$nome."', `email` = '".$email."', `fk_group` = '".$grupo."', `filiais` = '".$filial."', `status` = '".$status."' WHERE `id` = '".$id."'");
 
                 if($ins){
                     header("Location: ../index.php?url=admin-success"); exit;

@@ -16,9 +16,10 @@
                 $nome = $dados['nome'];
                 $desc = $dados['desricao'];
                 $user = $_SESSION['UserID'];
+                $filiais = $_SESSION['UserFilial'];
                 $grupo = implode(',', $dados['grupos']);
 
-                $ins = $this->conexao->query("INSERT INTO `tb_formulario` (`nome`, `descricao`, `data_criacao`, `fk_user_criador`, `grupos`, `status`) VALUES ('".$nome."', '".$desc."', now(), '".$user."', '".$grupo."', 'A')");
+                $ins = $this->conexao->query("INSERT INTO `tb_formulario` (`nome`, `descricao`, `data_criacao`, `fk_user_criador`,`filial`, `grupos`, `status`) VALUES ('".$nome."', '".$desc."', now(), '".$user."', '".$filiais."', '".$grupo."', 'A')");
                 if($ins){
                     $consulta = $this->conexao->query("SELECT * FROM tb_formulario ORDER BY id DESC LIMIT 1");
                     $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -56,6 +57,16 @@
         public function consultaForm(){
             try{
                 $consulta = $this->conexao->query("SELECT id, nome, descricao, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario");
+                $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                return $retorno;
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
+        public function consultarFiliais(){
+            try{
+                $consulta = $this->conexao->query("SELECT id, descricao FROM tb_filial");
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){

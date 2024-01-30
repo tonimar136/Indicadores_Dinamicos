@@ -1,6 +1,7 @@
 <?php
 	require_once 'class/group.class.php';
 	$group 	= new Group();
+	$filiais = $group->consultaFilial();
 	$grupos = $group->consultaGroup();
 	$user 	= $group->consultaUser();
 
@@ -69,6 +70,18 @@
 						</div>
 						
 						<div class="form-group">
+							<label for="filial">Filial</label><br>
+							<?php
+								$j = 0;
+								$cont = count($filiais);
+								while($j < $cont){
+									echo '<input type="checkbox" name="filiais[]" value="'.$filiais[$j]['id'].'" /> ' . $filiais[$j]['descricao'] . '<br>';
+									$j++;
+								}
+							?>
+						</div>
+
+						<div class="form-group">
 							<label for="grupo">Grupo</label>
 							<select class="form-control" id="grupo" name="grupo" required="">
 								<option value="">-- SELECIONE --</option>
@@ -107,6 +120,7 @@
     							<th scope="col">ID</th>
     							<th scope="col">NOME</th>
     							<th scope="col">E-MAIL</th>
+    							<th scope="col">FILIAL</th>
     							<th scope="col">GRUPO</th>
     							<th scope="col">STATUS</th>
     							<th scope="col">AÇÃO</th>
@@ -122,6 +136,7 @@
 			    					    	<td>'.$user[$g]['id'].'</td>
 			    					    	<td>'.$user[$g]['nome'].'</td>
 			    					    	<td>'.$user[$g]['email'].'</td>
+			    					    	<td>'.$user[$g]['filial'].'</td>
 			    					    	<td>'.$user[$g]['grupo'].'</td>
 			    					    	<td>'.$user[$g]['status'].'</td>
 			    					    	<td>
@@ -142,11 +157,20 @@
 																<div class="modal-body">
 																	<input type="hidden" name="id" value="'.$user[$g]['id'].'">
 																	<b>ID</b><input type="text" class="form-control" value="'.$user[$g]['id'].'" disabled><br>
-																	<b>NOME DO USUÁRIO</b><input type="text" class="form-control" name="nome" value="'.$user[$g]['nome'].'"><br>
+																	<b>NOME DO USUÁRIO</b><input type="text" class="form-control" name="nome" value="'.$user[$g]['nome'].'" required><br>
 
-																	<b>EMAIL</b><input type="email" class="form-control" name="email" value="'.$user[$g]['email'].'"><br>
+																	<b>EMAIL</b><input type="email" class="form-control" name="email" value="'.$user[$g]['email'].'" required><br>
+																	<b>FILIAL</b><br>';
+																			$f1 = 0;
+																			$fr = count($filiais);
+																			while($f1 < $fr){
+																				if(strpos($user[$g]['filial_id'], $filiais[$f1]['id']) !== false){ $ck = 'checked';} else { $ck = '';}
+																				echo '<input type="checkbox" name="filiais[]" value="'.$filiais[$f1]['id'].'" '.$ck.' /> ' . $filiais[$f1]['descricao'] . '<br>';
+																				$f1++;
+																			}
+																	echo '</select><br>
 																	<b>GRUPO</b>
-																		<select class="form-control" name="grupo">
+																		<select class="form-control" name="grupo" required>
 																			<option value="">-- SELECIONE --</option>';
 																			$g1 = 0;
 																			$gr = count($grupos);
@@ -235,7 +259,17 @@
 <script>
     $(document).ready(function(){
         $('#tableForm').DataTable({
-            "language": {"url": "//cdn.datatables.net/plug-ins/1.13.3/i18n/pt-BR.json"}
+            "language": {"url": "//cdn.datatables.net/plug-ins/1.13.3/i18n/pt-BR.json"},
+            "columnDefs": [
+	            {
+	                "targets": 3, // Índice da coluna que você deseja truncar (começando do 0)
+	                "render": function (data, type, row) {
+	                    return (type === 'display' && data.length > 50) ?
+	                        data.substr(0, 50) + '...' :
+	                        data;
+	                }
+	            }
+	        ]
         });
     });
 

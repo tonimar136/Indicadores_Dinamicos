@@ -35,6 +35,16 @@
             }
         }
 
+        public function consultaFilial(){
+            try{
+                $consulta = $this->conexao->query("SELECT `id`, `descricao`, CASE WHEN `status` = 'A' THEN 'ATIVO' ELSE 'INATIVO' END AS status FROM `tb_filial`");
+                $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                return $retorno;
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
         public function editGroup($dados){
             try{
                 $id         = $dados['id'];
@@ -77,7 +87,23 @@
 
         public function consultaUser(){
             try{
-                $consulta = $this->conexao->query("SELECT u.id as id, u.nome as nome, u.email as email, g.id as grupo_id, g.descricao as grupo, CASE WHEN u.status = 'A' THEN 'Ativo' ELSE 'Inativo' END as status FROM tb_usuario u INNER JOIN tb_group g ON g.id = u.fk_group");
+                $consulta = $this->conexao->query("
+                    SELECT
+                        u.id as id,
+                        u.nome as nome,
+                        u.email as email,
+                        GROUP_CONCAT(f.id) as filial_id,
+                        GROUP_CONCAT(f.descricao) as filial,
+                        g.id as grupo_id,
+                        g.descricao as grupo,
+                        CASE WHEN u.status = 'A' THEN 'Ativo' ELSE 'Inativo' END as status,
+                        u.filiais
+                    FROM 
+                        tb_usuario u
+                        INNER JOIN tb_group g ON g.id = u.fk_group
+                        LEFT JOIN tb_filial f ON FIND_IN_SET(f.id, REPLACE(u.filiais, ' ', '')) > 0
+                    GROUP BY
+                        u.id, u.nome, u.email, g.id, g.descricao, u.status, u.filiais");
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){

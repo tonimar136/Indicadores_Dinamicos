@@ -1,8 +1,7 @@
 <?php
 	require_once 'class/indicadores.class.php';
 	$ind	= new Indicadores();
-	$form	= $ind->consultaIndicadores($_SESSION['UserGroup']);
-
+	$form	= $ind->consultaIndicadores($_SESSION['UserGroup'], $_SESSION['UserFilial']);
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>

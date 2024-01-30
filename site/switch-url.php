@@ -90,6 +90,24 @@
         case 'admin-fail':
         include 'parts/admin/admin.php';
         break;
+
+
+
+        case 'filial':
+        include 'parts/admin/filial.php';
+        break;
+        case 'filial-ins':
+        include 'parts/admin/filial.php';
+        break;
+        case 'filial-fail':
+        include 'parts/admin/filial.php';
+        break;
+        case 'filial-success':
+        include 'parts/admin/filial.php';
+        break;
+
+
+
         case 'group':
         include 'parts/admin/group.php';
         break;

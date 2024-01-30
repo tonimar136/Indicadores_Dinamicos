@@ -25,7 +25,7 @@
         }
 
 
-        public function consultaIndicadores($g){
+        public function consultaIndicadores($g, $f){
             try{
                 $consulta = $this->conexao->query("
                         SELECT
@@ -37,7 +37,9 @@
                             INNER JOIN tb_usuario u ON u.id = f.fk_user_criador
                         WHERE
                             f.status = 'A'
-                            AND f.grupos in('".$g."')");
+                            AND FIND_IN_SET('".$g."', f.grupos) > 0
+                            AND FIND_IN_SET('".$f."', f.filial) > 0");
+
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){
