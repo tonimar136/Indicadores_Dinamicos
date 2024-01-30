@@ -6,6 +6,7 @@
     $resp = $formulario->consultaTipoResposta();
     $perg = $formulario->listaPergunta($id);
     $grup = $formulario->consultaGrupos();
+    $filiais = $formulario->consultaFiliais();
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
@@ -53,159 +54,189 @@
 	<!-- /.content-header -->
 	<!-- Main content -->
 	<section class="content">
-		<div class="container-fluid" style="width: 40% !important; display: flow-root; float: left;">
-			<div class="card card-info">
-            	<div class="card-header" style="background: #74b2d2">
-            		<h3 class="card-title">Dados do Formulário</h3>
-            	</div>
+        <div style="display: flex;">
+    		<div class="container-fluid" style="width: 40% !important; display: flow-root; float: left;">
+    			<div class="card card-info">
+                	<div class="card-header" style="background: #74b2d2">
+                		<h3 class="card-title">Dados do Formulário</h3>
+                	</div>
 
-            	<div style="padding: 20px;">
-					<div class="form-group">
-						<label for="nome">Nome do Formulário: </label> <span><?=$form[0]['nome']?></span>
-					</div>
-					<div class="form-group">
-						<label for="descricao">Descrição: </label> <span><?=$form[0]['descricao']?></span>
-					</div>
+                	<div style="padding: 20px;">
+    					<div class="form-group">
+    						<label for="nome">Nome do Formulário: </label> <span><?=$form[0]['nome']?></span>
+    					</div>
+    					<div class="form-group">
+    						<label for="descricao">Descrição: </label> <span><?=$form[0]['descricao']?></span>
+    					</div>
 
-                    <div class="form-group">
-                        <label for="nomeForm">Grupos: </label><br>
-                        <?php
-                            $g = $form[0]['grupos'];
-                            $i = 0;
-                            $ct = count($grup);
-                            while($i < $ct){
-                                    $idGrupo = $grup[$i]['id'];
-                                    $meusGrupos = (in_array($idGrupo, explode(',', $g))) ? '- ' . $grup[$i]['descricao'] . '<br>' : '';
-                                    echo $meusGrupos;
-                                $i++;
-                            }
-                        ?>
-                    </div>                    
+                        <div class="form-group">
+                            <label for="nomeForm">Filiais: </label><br>
+                            <?php
+                                $f = $form[0]['filial'];
+                                $i = 0;
+                                $ct = count($filiais);
+                                while($i < $ct){
+                                        $idFilial = $filiais[$i]['id'];
+                                        $minhasFiliais = (in_array($idFilial, explode(',', $f))) ? '- ' . $filiais[$i]['descricao'] . '<br>' : '';
+                                        echo $minhasFiliais;
+                                    $i++;
+                                }
+                            ?>
+                        </div> 
 
-                    <button type="button" class="btn" data-toggle="modal" data-target="#editDados" title="Editar" style="float: right; box-shadow: 0 14px 28px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.22) !important">
-                        <img src="images/edit.png" width="25px"><br>
-                        <span style="font-size: 10px"><b>EDITAR</b></span>
-                    </button>
+                        <div class="form-group">
+                            <label for="nomeForm">Grupos: </label><br>
+                            <?php
+                                $g = $form[0]['grupos'];
+                                $i = 0;
+                                $ct = count($grup);
+                                while($i < $ct){
+                                        $idGrupo = $grup[$i]['id'];
+                                        $meusGrupos = (in_array($idGrupo, explode(',', $g))) ? '- ' . $grup[$i]['descricao'] . '<br>' : '';
+                                        echo $meusGrupos;
+                                    $i++;
+                                }
+                            ?>
+                        </div>                    
 
-                    <!-- Modal Editar -->
-                    <div class="modal fade" id="editDados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Editar Dados do Formulário</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                        <button type="button" class="btn" data-toggle="modal" data-target="#editDados" title="Editar" style="float: right; box-shadow: 0 14px 28px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.22) !important">
+                            <img src="images/edit.png" width="25px"><br>
+                            <span style="font-size: 10px"><b>EDITAR</b></span>
+                        </button>
+
+                        <!-- Modal Editar -->
+                        <div class="modal fade" id="editDados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Editar Dados do Formulário</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="controller/form-controller.php" method="POST">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="id" value="<?=$form[0]['id']?>">
+                                            <label for="nomeForm">Nome do Formulário: </label>
+                                            <input type="text" class="form-control" id="nomeForm" name="nomeForm" value="<?=$form[0]['nome']?>" required="">
+
+                                            <br>
+                                            <label for="descricao">Descrição: </label>
+                                            <input type="text" class="form-control" id="descricao" name="descricao" value="<?=$form[0]['descricao']?>" required="">
+
+                                            <br>
+                                            <label for="nomeForm">Grupos: </label><br>
+                                            <?php
+                                                $f = $form[0]['filial'];
+                                                $i = 0;
+                                                $ct = count($filiais);
+                                                while($i < $ct){
+                                                        $idFilial = $filiais[$i]['id'];
+                                                        $checked = (in_array($idFilial, explode(',', $f))) ? 'checked' : '';
+                                                        echo '<input type="checkbox" value="'.$filiais[$i]['id'].'" name="filial[]" '.$checked.'/> '.$filiais[$i]['descricao'].' <br>';
+                                                    $i++;
+                                                }
+                                            ?>
+
+                                            <br>
+                                            <label for="nomeForm">Grupos: </label><br>
+                                            <?php
+                                                $g = $form[0]['grupos'];
+                                                $i = 0;
+                                                $ct = count($grup);
+                                                while($i < $ct){
+                                                        $idGrupo = $grup[$i]['id'];
+                                                        $checked = (in_array($idGrupo, explode(',', $g))) ? 'checked' : '';
+                                                        echo '<input type="checkbox" value="'.$grup[$i]['id'].'" name="grupo[]" '.$checked.'/> '.$grup[$i]['descricao'].' <br>';
+                                                    $i++;
+                                                }
+                                            ?>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <input type="submit" class="btn btn-primary" name="editarForm" value="Salvar">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form action="controller/form-controller.php" method="POST">
-                                    <div class="modal-body">
-                                        <input type="hidden" name="id" value="<?=$form[0]['id']?>">
-                                        <label for="nomeForm">Nome do Formulário: </label>
-                                        <input type="text" class="form-control" id="nomeForm" name="nomeForm" value="<?=$form[0]['nome']?>" required="">
+                            </div>
+                        </div>
+            	   </div>
+    			</div>
+    		</div>
+            <div class="container-fluid" style="width: 60% !important; display: flow-root;">
+                <div class="card card-info">
+                    <div class="card-header" style="background: #74b2d2">
+                        <h3 class="card-title">Cadastro de Perguntas</h3>
+                    </div>
 
-                                        <br>
-                                        <label for="descricao">Descrição: </label>
-                                        <input type="text" class="form-control" id="descricao" name="descricao" value="<?=$form[0]['descricao']?>" required="">
+                    <form action="controller/form-controller.php" method="POST">
+                        <input type="hidden" name="formulario" value="<?=$id?>">
+                        <div style="padding: 20px;">
+                            <div class="form-group">
+                                <label for="pergunta">Pergunta: </label>
+                                <input type="text" class="form-control" id="pergunta" name="pergunta" placeholder="Digite aqui a descrição de sua pergunta..." required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="seq">Sequência no Formulário: </label>
+                                <input type="number" class="form-control" id="seq" name="seq" placeholder="Sequência que a pergunta vai aparecer no formulário..." required="">
+                            </div>
 
-                                        <br>
-                                        <label for="nomeForm">Grupos: </label><br>
+                            <div class="form-group">
+                                <label for="tipo">Tipo de Resposta: </label>
+                                <img src="images/interrogacao.png" alt="Aviso" style="width: 20px; cursor: pointer;" data-toggle="modal" data-target="#exemplo">
+                                <!-- Modal -->
+                                <div class="modal fade" id="exemplo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Exemplo dos Tipos de Campo</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p style="text-align: justify;">Os campos que possuem <b>*</b> são campos onde você precisará cadastrar opções, e no momento de preenchimento do formulário tará que selecionar uma dessas opções cadastradas.</p>
+                                                <br><br>
+                                                Ex: Radio
+                                                <br>
+                                                <img src="images/radio_ex.png">
+                                                <br>
+                                                Ex: Select
+                                                <br>
+                                                <img src="images/select_ex.png">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <select class="form-control" id="tipo" name="tipo" onchange="habilitarBtn()" required="">
+                                        <option value="">-- SELECIONE --</option>
                                         <?php
-                                            $g = $form[0]['grupos'];
-                                            $i = 0;
-                                            $ct = count($grup);
-                                            while($i < $ct){
-                                                    $idGrupo = $grup[$i]['id'];
-                                                    $checked = (in_array($idGrupo, explode(',', $g))) ? 'checked' : '';
-                                                    echo '<input type="checkbox" value="'.$grup[$i]['id'].'" name="grupo[]" '.$checked.'/> '.$grup[$i]['descricao'].' <br>';
-                                                $i++;
+                                            $j = 0;
+                                            $cont = count($resp);
+                                            while($j < $cont){
+                                                echo '<option value="'.$resp[$j]['id'].'">' . $resp[$j]['descricao'].'</option>';
+                                                $j++;
                                             }
                                         ?>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <input type="submit" class="btn btn-primary" name="editarForm" value="Salvar">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-        	   </div>
-			</div>
-		</div>
-        <div class="container-fluid" style="width: 60% !important; display: flow-root;">
-            <div class="card card-info">
-                <div class="card-header" style="background: #74b2d2">
-                    <h3 class="card-title">Cadastro de Perguntas</h3>
-                </div>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <button type="button" id="add" class="btn btn-primary btn-sm" onclick="adicionarInput()" style="display: none; margin-bottom: 10px"><b>ADICIONAR RESPOSTA</b></button>
 
-                <form action="controller/form-controller.php" method="POST">
-                    <input type="hidden" name="formulario" value="<?=$id?>">
-                    <div style="padding: 20px;">
-                        <div class="form-group">
-                            <label for="pergunta">Pergunta: </label>
-                            <input type="text" class="form-control" id="pergunta" name="pergunta" placeholder="Digite aqui a descrição de sua pergunta..." required="">
-                        </div>
-                        <div class="form-group">
-                            <label for="seq">Sequência no Formulário: </label>
-                            <input type="number" class="form-control" id="seq" name="seq" placeholder="Sequência que a pergunta vai aparecer no formulário..." required="">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="tipo">Tipo de Resposta: </label>
-                            <img src="images/interrogacao.png" alt="Aviso" style="width: 20px; cursor: pointer;" data-toggle="modal" data-target="#exemplo">
-                            <!-- Modal -->
-                            <div class="modal fade" id="exemplo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Exemplo dos Tipos de Campo</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p style="text-align: justify;">Os campos que possuem <b>*</b> são campos onde você precisará cadastrar opções, e no momento de preenchimento do formulário tará que selecionar uma dessas opções cadastradas.</p>
-                                            <br><br>
-                                            Ex: Radio
-                                            <br>
-                                            <img src="images/radio_ex.png">
-                                            <br>
-                                            Ex: Select
-                                            <br>
-                                            <img src="images/select_ex.png">
-                                        </div>
-                                    </div>
+                                    <div id="inputsContainer"></div>
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <select class="form-control" id="tipo" name="tipo" onchange="habilitarBtn()" required="">
-                                    <option value="">-- SELECIONE --</option>
-                                    <?php
-                                        $j = 0;
-                                        $cont = count($resp);
-                                        while($j < $cont){
-                                            echo '<option value="'.$resp[$j]['id'].'">' . $resp[$j]['descricao'].'</option>';
-                                            $j++;
-                                        }
-                                    ?>
-                                </select>
-                            </div>
                             
-                            <div class="form-group">
-                                <button type="button" id="add" class="btn btn-primary btn-sm" onclick="adicionarInput()" style="display: none; margin-bottom: 10px"><b>ADICIONAR RESPOSTA</b></button>
-
-                                <div id="inputsContainer"></div>
-                            </div>
+                            <button type="submit" class="btn btn-info" name="cadPergunta" id="cadPergunta" style="float: right; margin-bottom: 15px;" title="Salvar formulário">SALVAR</button>
                         </div>
-                        
-                        <button type="submit" class="btn btn-info" name="cadPergunta" id="cadPergunta" style="float: right; margin-bottom: 15px;" title="Salvar formulário">SALVAR</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
 		<!-- /.container-fluid -->
-
+        </div>
 		<hr>
 
 		<div class="container-fluid">

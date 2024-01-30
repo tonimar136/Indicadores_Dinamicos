@@ -16,7 +16,7 @@
                 $nome = $dados['nome'];
                 $desc = $dados['desricao'];
                 $user = $_SESSION['UserID'];
-                $filiais = $_SESSION['UserFilial'];
+                $filiais = implode(',', $dados['filiais']);
                 $grupo = implode(',', $dados['grupos']);
 
                 $ins = $this->conexao->query("INSERT INTO `tb_formulario` (`nome`, `descricao`, `data_criacao`, `fk_user_criador`,`filial`, `grupos`, `status`) VALUES ('".$nome."', '".$desc."', now(), '".$user."', '".$filiais."', '".$grupo."', 'A')");
@@ -35,12 +35,14 @@
 
         public function editaFormulario($dados){
             try{
+                #echo '<pre>'; print_r($dados); die;
                 $id   = $dados['id'];
                 $nome = $dados['nomeForm'];
                 $desc = $dados['descricao'];
+                $filiais = implode(',', $dados['filiais']);
                 $grupo = implode(',', $dados['grupos']);
 
-                $up = $this->conexao->query("UPDATE `tb_formulario` SET `nome` = '".$nome."', `descricao` = '".$desc."', `grupos` = '".$grupo."' WHERE `id` = '".$id."'");
+                $up = $this->conexao->query("UPDATE `tb_formulario` SET `nome` = '".$nome."', `descricao` = '".$desc."', `filial` = '".$filiais."', `grupos` = '".$grupo."' WHERE `id` = '".$id."'");
                 if($up){
                     $reg = base64_encode($id);
                     header("Location: ../index.php?url=form-detail-ins&reg=".$reg); exit;
@@ -54,9 +56,30 @@
 
 
 
-        public function consultaForm(){
+        public function consultaForm($id, $g){
             try{
-                $consulta = $this->conexao->query("SELECT id, nome, descricao, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario");
+                if($g == '1'){
+                    $consulta = $this->conexao->query("SELECT id, nome, descricao, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario");
+                    $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                    return $retorno;
+                }else{
+                    $consulta = $this->conexao->query("SELECT id, nome, descricao, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario WHERE fk_user_criador = '".$id."'");
+                    $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                    return $retorno;
+                }
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
+        public function consultarFiliais(){
+            if(!isset($_SESSION['UserID'])){
+                session_start();
+            }
+             $filiais = str_replace(",", "','", $_SESSION['UserFilial']);
+
+            try{
+                $consulta = $this->conexao->query("SELECT id, descricao FROM tb_filial WHERE id IN ('".$filiais."')");
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){
@@ -64,9 +87,9 @@
             }
         }
 
-        public function consultarFiliais(){
+        public function consultaFiliais(){
             try{
-                $consulta = $this->conexao->query("SELECT id, descricao FROM tb_filial");
+                $consulta = $this->conexao->query("SELECT * FROM tb_filial");
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){
@@ -96,7 +119,7 @@
 
         public function formDetalhe($id){
             try{
-                $consulta = $this->conexao->query("SELECT id, nome, descricao, grupos, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario WHERE id = " . $id);
+                $consulta = $this->conexao->query("SELECT id, nome, descricao, filial, grupos, CASE WHEN status = 'A' THEN 'Ativo' else 'Inativo' END AS status FROM tb_formulario WHERE id = " . $id);
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){

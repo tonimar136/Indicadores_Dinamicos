@@ -1,7 +1,7 @@
 <?php
 	require_once 'class/form.class.php';
 	$formulario	= new Formulario();
-	$form 		= $formulario->consultaForm();
+	$form 		= $formulario->consultaForm($_SESSION['UserID'], $_SESSION['UserGroup']);
     $grup       = $formulario->consultaGrupos();
     $fil        = $formulario->consultarFiliais();
 ?>
@@ -14,7 +14,7 @@
 	#tableForm_filter{
 		float: right;
 	}
-</style>>
+</style>
 
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->
@@ -94,7 +94,6 @@
             	<div class="card-header" style="background: #74b2d2">
             		<h3 class="card-title">Formulários Cadastrados</h3>
             	</div>
-
 				<div style="padding: 30px">
                 	<!-- /.card-header -->
                 	<table id="tableForm" class="table table-striped" style="width:100%">

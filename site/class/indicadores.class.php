@@ -25,8 +25,21 @@
         }
 
 
-        public function consultaIndicadores($g, $f){
+        public function consultaIndicadores($gp, $f){
             try{
+                $filiais = explode(',', $f);
+                $g = 0;
+                $ct = count($filiais);
+                $condicao = '';
+                while($g < $ct){
+                    if($g == 0)
+                        $condicao .= "AND FIND_IN_SET('".$filiais[$g]."', f.filial) > 0 ";
+                    else{
+                        $condicao .= " OR FIND_IN_SET('".$filiais[$g]."', f.filial) > 0 ";
+                    }
+                    $g++;
+                }
+
                 $consulta = $this->conexao->query("
                         SELECT
                             f.id as id,
@@ -37,8 +50,8 @@
                             INNER JOIN tb_usuario u ON u.id = f.fk_user_criador
                         WHERE
                             f.status = 'A'
-                            AND FIND_IN_SET('".$g."', f.grupos) > 0
-                            AND FIND_IN_SET('".$f."', f.filial) > 0");
+                            AND FIND_IN_SET('".$gp."', f.grupos) > 0
+                            " . $condicao);
 
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;

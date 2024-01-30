@@ -43,7 +43,7 @@
 	<!-- /.content-header -->
 	<!-- Main content -->
 	<section class="content">
-		<div class="container-fluid" style="width: 50% !important; display: flow-root;">
+		<div class="container-fluid" style="width: 50% !important; display: flow-root; min-width: 790px !important">
 			<div class="card card-info">
             	<div class="card-header" style="background: #74b2d2">
             		<h3 class="card-title">Meus Indicadores</h3>

@@ -12,7 +12,7 @@
 	#tableForm_filter{
 		float: right;
 	}
-</style>>
+</style>
 
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->

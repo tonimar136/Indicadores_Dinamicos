@@ -32,7 +32,7 @@
         $dados['nome']   = $_POST['nome'];
         $dados['email']  = $_POST['email'];
         $dados['senha']  = $_POST['senha'];
-        $dados['filial'] = implode(', ', $_POST['filiais']);
+        $dados['filial'] = implode(',', $_POST['filiais']);
         $dados['grupo']  = $_POST['grupo'];
         if($dados != null){
             $usuario->insertUser($dados);
@@ -46,7 +46,7 @@
         $dados['id']  = $_POST['id'];
         $dados['nome']  = $_POST['nome'];
         $dados['email'] = $_POST['email'];
-        $dados['filial'] = implode(', ', $_POST['filiais']);
+        $dados['filial'] = implode(',', $_POST['filiais']);
         $dados['grupo'] = $_POST['grupo'];
         $dados['status'] = $_POST['status'];
         if($dados != null){

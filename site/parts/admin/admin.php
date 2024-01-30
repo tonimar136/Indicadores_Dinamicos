@@ -15,7 +15,7 @@
 	#tableForm_filter{
 		float: right;
 	}
-</style>>
+</style>
 
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->
@@ -176,7 +176,7 @@
 																			$gr = count($grupos);
 																			while($g1 < $gr){
 																				?>
-																					<option <?php echo 'value="'.$user[$g]['grupo_id']. '"';?>
+																					<option <?php echo 'value="'.$grupos[$g1]['id']. '"';?>
 																						<?php
 																							if($user[$g]['grupo_id'] == $grupos[$g1]['id']){
 																								echo 'selected';
