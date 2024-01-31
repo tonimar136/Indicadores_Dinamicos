@@ -128,6 +128,10 @@
 
         public function formRespostas($dados, $pr){
             try{
+                if(!isset($_SESSION['UserID'])){
+                    session_start();
+                }
+                $fl = $_SESSION['UserFilialLogada'];
                 #echo '<pre>'; print_r($pr);; die;
                 $usuario    = $dados['user'];
                 $formulario = $dados['formulario'];
@@ -171,14 +175,14 @@
                         $t = 2;
                         $cont = count($partesArray[$g]);
                         while($t < $cont){
-                            $ins = $this->conexao->query("INSERT INTO `tb_formulario_reposta` (`controle`, `fk_usuario`, `fk_formulario`, `fk_pergunta`, `fk_resposta`, `data_insert`) VALUES ('".$controle."', '".$usuario."', '".$formulario."', '".$partesArray[$g][0]."', '".$partesArray[$g][$t]."', now())");
+                            $ins = $this->conexao->query("INSERT INTO `tb_formulario_reposta` (`controle`, `fk_usuario`, `fk_formulario`, `fk_filial`, `fk_pergunta`, `fk_resposta`, `data_insert`) VALUES ('".$controle."', '".$usuario."', '".$formulario."', '".$fl."', '".$partesArray[$g][0]."', '".$partesArray[$g][$t]."', now())");
                             $t++;
                         }
                     }else{
                         if(($partesArray[$g][1] == 'SELECT *') || ($partesArray[$g][1] == 'RADIO *')){
-                            $ins = $this->conexao->query("INSERT INTO `tb_formulario_reposta` (`controle`, `fk_usuario`, `fk_formulario`, `fk_pergunta`, `fk_resposta`, `data_insert`) VALUES ('".$controle."', '".$usuario."', '".$formulario."', '".$partesArray[$g][0]."', '".$partesArray[$g][2]."', now())");
+                            $ins = $this->conexao->query("INSERT INTO `tb_formulario_reposta` (`controle`, `fk_usuario`, `fk_formulario`, `fk_filial`, `fk_pergunta`, `fk_resposta`, `data_insert`) VALUES ('".$controle."', '".$usuario."', '".$formulario."', '".$fl."', '".$partesArray[$g][0]."', '".$partesArray[$g][2]."', now())");
                         }else{
-                            $ins = $this->conexao->query("INSERT INTO `tb_formulario_reposta` (`controle`, `fk_usuario`, `fk_formulario`, `fk_pergunta`, `resposta`, `data_insert`) VALUES ('".$controle."', '".$usuario."', '".$formulario."', '".$partesArray[$g][0]."', '".$partesArray[$g][2]."', now())");
+                            $ins = $this->conexao->query("INSERT INTO `tb_formulario_reposta` (`controle`, `fk_usuario`, `fk_formulario`, `fk_filial`, `fk_pergunta`, `resposta`, `data_insert`) VALUES ('".$controle."', '".$usuario."', '".$formulario."', '".$fl."', '".$partesArray[$g][0]."', '".$partesArray[$g][2]."', now())");
                         }
                     }
                     $g++;
@@ -276,6 +280,11 @@
 
         public function meusIndicadores($id){
             try{
+                if(!isset($_SESSION['UserID'])){
+                    session_start();
+                }
+                $fl = $_SESSION['UserFilialLogada'];
+
                 $consulta = $this->conexao->query("
                         SELECT DISTINCT
                             tf.id as id_form,
@@ -286,7 +295,8 @@
                             tb_formulario_reposta tfr
                             INNER JOIN tb_formulario tf ON tf.id = tfr.fk_formulario
                         WHERE
-                            tfr.fk_usuario = '".$id."'");
+                            tfr.fk_usuario = '".$id."'
+                            AND tfr.fk_filial = '".$fl."'");
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){

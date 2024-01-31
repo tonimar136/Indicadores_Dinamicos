@@ -14,11 +14,18 @@
 				<a href="#" class="d-block">
 					<center>
 						<b>Bem-vindo(a)</b><br>
-						<?php echo $_SESSION['UserNome'];?>
+						<?php
+							echo $_SESSION['UserNome'] . '<br>';
+							if(isset($_SESSION['UserFilialLogadaNome'])){
+								echo '<span style="font-size: 10px">'. $_SESSION['UserFilialLogadaNome'].'</span>';
+								echo '<a href="index.php?url=alter-filial" class="btn btn-success btn-sm">Trocar Filial</a>';
+							}
+						?>
 					</center>
 				</a>
 			</div>
 		</div>
+
 		<!-- SidebarSearch Form 
 			<div class="form-inline">
 			  <div class="input-group" data-widget="sidebar-search">

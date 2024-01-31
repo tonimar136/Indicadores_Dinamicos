@@ -24,13 +24,14 @@
                     header("Location: ../../index.php?id=".$erro);
                 }else{
                     if (!isset($_SESSION)) session_start();
-                    $_SESSION['UserID']         = $return[0]['id'];
-                    $_SESSION['UserNome']       = $return[0]['nome'];
-                    $_SESSION['UsuarioEmail']   = $return[0]['email'];
-                    $_SESSION['UserSenha']      = $return[0]['senha'];
-                    $_SESSION['UserFilial']     = $return[0]['filiais'];
-                    $_SESSION['UserGroup']      = $return[0]['fk_group'];
-                    $_SESSION['UserStatus']     = $return[0]['status'];
+                    $_SESSION['UserID']           = $return[0]['id'];
+                    $_SESSION['UserNome']         = $return[0]['nome'];
+                    $_SESSION['UsuarioEmail']     = $return[0]['email'];
+                    $_SESSION['UserSenha']        = $return[0]['senha'];
+                    $_SESSION['UserFilial']       = $return[0]['filiais'];
+                    $_SESSION['UserGroup']        = $return[0]['fk_group'];
+                    $_SESSION['UserStatus']       = $return[0]['status'];
+                    $_SESSION['UserFilialLogada'] = null;
                     #print_r($_SESSION); die;
                   header("Location: ../index.php"); exit;
                 }
@@ -107,6 +108,27 @@
         public function consultaUser(){
             try{
                 $consulta = $this->conexao->query("SELECT u.id as id, u.nome as nome, u.email as email, g.descricao as grupo, CASE WHEN u.status = 'A' THEN 'Ativo' ELSE 'Inativo' END as status FROM tb_usuario u INNER JOIN tb_group g ON g.id = u.fk_group");
+                $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                return $retorno;
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
+        public function consultaFilial($f){
+            try{
+                $fil = str_replace(",", "', '", $f);
+                $consulta = $this->conexao->query("SELECT id, descricao FROM tb_filial WHERE id in ('".$fil."')");
+                $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                return $retorno;
+            }catch(PDOException $erro){
+                return 'error'.$erro->getMessage();
+            }
+        }
+
+        public function consultaFilialLogada($f){
+            try{
+                $consulta = $this->conexao->query("SELECT id, descricao FROM tb_filial WHERE id = ('".$f."')");
                 $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
                 return $retorno;
             }catch(PDOException $erro){

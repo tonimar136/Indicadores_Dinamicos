@@ -14,6 +14,10 @@
     	case 'home':
     	include 'parts/home.php';
     	break;
+        case 'alter-filial':
+        $_SESSION['UserFilialLogada'] = null;
+        include 'parts/home.php';
+        break;
         /*****************************FORM*************************************/
         case 'formulario':
         include 'parts/form/formularios.php';
